@@ -164,7 +164,7 @@ export default function App() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    fetch('./src/data/news.json')
+    fetch(import.meta.env.BASE_URL + 'data/news.json')
       .then(r => { if (!r.ok) throw new Error('데이터 없음'); return r.json() })
       .then(d => { setData(d); setLoading(false) })
       .catch(e => { setError(e.message); setLoading(false) })
