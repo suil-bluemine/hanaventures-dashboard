@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@theme {
+  /* ── 브랜드 색상 ── */
+  --color-hana-dark:    #0d1117;
+  --color-hana-surface: #161b27;
+  --color-hana-border:  #21262d;
+  --color-hana-gold:    #c9a227;
+  --color-hana-green:   #00a550;
+  --color-hana-muted:   #8b949e;
+
+  /* ── 폰트 ── */
+  --font-display: "Inter", system-ui, sans-serif;
+  --font-body:    "Inter", system-ui, sans-serif;
+}
+
+.news-card {
+  transition: border-color 0.2s, background-color 0.2s, transform 0.2s;
+}
+.news-card:hover {
+  border-color: color-mix(in srgb, #c9a227 35%, transparent);
+  background-color: rgba(255, 255, 255, 0.04);
+  transform: translateY(-2px);
+}
+
+.summary-box {
+  background: linear-gradient(135deg, #161b27 0%, #1a2035 100%);
+  border: 1px solid #2a3040;
+}
