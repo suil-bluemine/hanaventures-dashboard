@@ -5,11 +5,21 @@ on:
     - cron: '0 21 * * *'   # 매일 KST 06:00 (UTC 21:00 전일)
   workflow_dispatch:         # 수동 실행 허용
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
-  update:
+  deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
 
     steps:
       - uses: actions/checkout@v4
@@ -21,8 +31,8 @@ jobs:
 
       - name: 데이터 수집
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          NAVER_CLIENT_ID:   ${{ secrets.NAVER_CLIENT_ID }}
+          ANTHROPIC_API_KEY:   ${{ secrets.ANTHROPIC_API_KEY }}
+          NAVER_CLIENT_ID:     ${{ secrets.NAVER_CLIENT_ID }}
           NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
         run: python scripts/fetch_data.py
 
@@ -32,13 +42,16 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: 빌드 및 배포
+      - name: 빌드
         run: |
           npm ci
           npm run build
 
-      - name: GitHub Pages 배포
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Pages 아티팩트 업로드
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          path: ./dist
+
+      - name: GitHub Pages 배포
+        id: deploy
+        uses: actions/deploy-pages@v4
